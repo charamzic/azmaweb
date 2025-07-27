@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Oops! Something went wrong</h1>
+            <p class="page-subtitle">We encountered an unexpected error</p>
+        </div>
+    </div>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="error-icon">⚠️</div>
+
+                            <h2 class="card-title">Error <span th:text="${status}">500</span></h2>
+                            <p class="card-text error-description">
+                                <span th:text="${error}">Internal Server Error</span>
+                            </p>
+
+                            <div th:if="${message}" class="error-details">
+                                <p th:text="${message}">Error details</p>
+                            </div>
+
+                            <div class="error-actions">
+                                <a th:href="@{/}" class="btn btn-primary">Go Home</a>
+                                <button onclick="history.back()" class="btn btn-secondary">Go Back</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section error-help-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="card-title">Need Help?</h3>
+                            <p class="card-text">
+                                If this error persists, please don't hesitate to reach out. I'd be happy to help resolve any issues.
+                            </p>
+                            <a th:href="@{/contact}" class="btn btn-primary">Contact Me</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>

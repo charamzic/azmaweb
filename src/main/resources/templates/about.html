@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<div layout:fragment="content">
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title" th:text="#{about.page.title}">About Me</h1>
+            <p class="hero-subtitle" th:text="#{about.page.subtitle}">My journey from career transition to DevOps engineering</p>
+        </div>
+    </div>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title" th:text="#{about.description.title}">From New Beginnings to DevOps Excellence</h2>
+                            <p class="card-text" th:utext="#{about.description}">
+                                In 2022, I made a significant career transition into programming, starting with Java as my foundation language.
+                                This decision marked the beginning of an exciting journey in software development and technology.
+                                What began as learning Java fundamentals quickly expanded into exploring the broader ecosystem of modern development.
+                                I discovered my passion for building complete applications—not just writing code, but creating solutions that are
+                                both functional and visually appealing.
+                                Currently, I'm expanding my skills into Python for its versatility in automation and data processing,
+                                and React Native for cross-platform mobile development. I believe in the power of diverse technologies
+                                to solve different problems effectively.
+                                Today, I work as a DevOps Engineer at Deutsche Böerse Group, where I focus on improving development workflows,
+                                implementing CI/CD pipelines, and bridging the gap between development and operations teams.
+                            </p>
+
+                            <div class="text-center action-buttons">
+                                <a th:href="@{/projects}" class="btn btn-primary" th:text="#{about.beyond.code.view.my.work}">View My Work</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title" th:text="#{about.beyond.code.title}">Beyond Code</h2>
+                            <p class="card-text" th:utext="#{about.beyond.code.description}">
+                                When I'm not coding, I enjoy exploring new technologies, contributing to open-source projects,
+                                and staying connected with the developer community. I believe that the best solutions come from
+                                collaboration and sharing knowledge.
+                                My transition into programming has taught me that it's never too late to pursue your passion.
+                                Every challenge is an opportunity to grow, and every project is a chance to create something meaningful.
+                            </p>
+
+                            <div class="text-center action-buttons">
+                                <a th:href="@{/blog}" class="btn btn-primary" th:text="#{about.beyond.code.blog}">See my blog</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+</html>
