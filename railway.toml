@@ -1,5 +1,5 @@
 [build]
-builder = "DOCKERFILE"
+builder = "PACK_BUILDER"
 
 [deploy]
 healthcheckPath = "/actuator/health"
