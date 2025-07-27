@@ -7,14 +7,23 @@ WORKDIR /app
 # Copy pom.xml first for better layer caching
 COPY pom.xml .
 
-# Download dependencies (this layer will be cached if pom.xml doesn't change)
-RUN mvn dependency:go-offline -B
+# Download dependencies with timeout and retry settings
+RUN mvn dependency:go-offline -B \
+    -Dmaven.wagon.http.connectionTimeout=30000 \
+    -Dmaven.wagon.http.readTimeout=30000 \
+    -Dmaven.wagon.rto=10000 \
+    -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 \
+    -Dhttp.keepAlive=false \
+    -Dmaven.wagon.http.pool=false
 
 # Copy source code
 COPY src ./src
 
-# Build the application
-RUN mvn clean package -DskipTests
+# Build the application with optimized settings
+RUN mvn clean package -DskipTests -B \
+    -Dmaven.wagon.http.connectionTimeout=30000 \
+    -Dmaven.wagon.http.readTimeout=30000 \
+    -Dhttp.keepAlive=false
 
 # Production stage
 FROM eclipse-temurin:17-jre-jammy
