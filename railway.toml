@@ -1,5 +1,3 @@
-[build]
-
 [deploy]
 healthcheckPath = "/actuator/health"
 healthcheckTimeout = 300
