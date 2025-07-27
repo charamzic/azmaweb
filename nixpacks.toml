@@ -1,8 +1,0 @@
-[variables]
-JAVA_VERSION = "17"
-
-[phases.build]
-cmds = ["./mvnw clean package -DskipTests -Dmaven.compiler.source=17 -Dmaven.compiler.target=17"]
-
-[phases.start]
-cmd = "java -jar target/*.jar"
