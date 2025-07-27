@@ -1,5 +1,5 @@
 # Multi-stage build for optimal image size
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 # Set working directory
 WORKDIR /app
@@ -26,7 +26,7 @@ RUN mvn clean package -DskipTests -B \
     -Dhttp.keepAlive=false
 
 # Production stage
-FROM eclipse-temurin:17-jre-jammy
+FROM eclipse-temurin:21-jre-jammy
 
 # Create non-root user for security
 RUN groupadd -r azmarach && useradd -r -g azmarach azmarach
