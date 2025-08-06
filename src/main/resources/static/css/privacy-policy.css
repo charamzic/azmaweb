@@ -1,0 +1,426 @@
+.privacy-header {
+  padding: 3rem 0 2rem;
+  background: linear-gradient(135deg,
+    var(--background-darker) 0%,
+    var(--background-dark) 50%,
+    rgba(157, 78, 221, 0.1) 100%);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.privacy-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(157,78,221,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.5;
+}
+
+.privacy-header .container {
+  position: relative;
+  z-index: 1;
+}
+
+.privacy-title {
+  font-family: var(--font-family-heading);
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.privacy-subtitle {
+  font-family: var(--font-family-body);
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ==================================================
+   CONTENT CONTAINER
+   ================================================== */
+
+.privacy-content-section {
+  padding: 4rem 0;
+  background: var(--background-dark);
+  min-height: 60vh;
+}
+
+.privacy-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ==================================================
+   PRIVACY CONTENT CARD
+   ================================================== */
+
+.privacy-content {
+  background: var(--card-bg);
+  padding: 3rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+/* Accent border on hover */
+.privacy-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    var(--primary-color) 0%,
+    var(--primary-light) 50%,
+    var(--primary-color) 100%);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.privacy-content:hover::before {
+  opacity: 1;
+}
+
+/* ==================================================
+   TYPOGRAPHY
+   ================================================== */
+
+/* Last Updated Badge */
+.last-updated {
+  font-family: var(--font-family-body);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.025em;
+  margin-bottom: 2rem;
+  padding: 0.75rem 1rem;
+  background: rgba(157, 78, 221, 0.05);
+  border-left: 3px solid var(--primary-color);
+  border-radius: 0 4px 4px 0;
+  display: inline-block;
+}
+
+/* Section Headings */
+.privacy-content h2 {
+  font-family: var(--font-family-heading);
+  color: var(--primary-light);
+  font-size: 1.75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(157, 78, 221, 0.2);
+  position: relative;
+}
+
+.privacy-content h2:first-of-type {
+  margin-top: 0;
+}
+
+/* Add number decoration to h2 */
+.privacy-content h2::before {
+  content: attr(data-section);
+  position: absolute;
+  left: -2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  color: rgba(157, 78, 221, 0.1);
+  font-weight: 700;
+}
+
+.privacy-content h3 {
+  font-family: var(--font-family-heading);
+  color: var(--primary-light);
+  font-size: 1.3rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--primary-color);
+}
+
+/* Paragraphs */
+.privacy-content p {
+  font-family: var(--font-family-body);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.8;
+  letter-spacing: 0.025em;
+  margin-bottom: 1rem;
+}
+
+/* Lists */
+.privacy-content ul {
+  font-family: var(--font-family-body);
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.privacy-content li {
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.75rem;
+  padding-left: 2rem;
+  position: relative;
+}
+
+/* Custom bullet points */
+.privacy-content li::before {
+  content: '▸';
+  position: absolute;
+  left: 0.5rem;
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+/* Strong text */
+.privacy-content strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Links */
+.privacy-content a {
+  color: var(--primary-light);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: var(--transition);
+}
+
+.privacy-content a:hover {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+.privacy-content a:focus-visible {
+  outline: 2px solid var(--primary-light);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ==================================================
+   CONTACT INFO BOX
+   ================================================== */
+
+.contact-info-box {
+  background: var(--background-dark);
+  padding: 1.75rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+  margin: 1.5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-info-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg,
+    var(--primary-color) 0%,
+    var(--primary-light) 100%);
+}
+
+.contact-info-box p {
+  font-family: var(--font-family-body);
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+}
+
+.contact-info-box p:last-child {
+  margin-bottom: 0;
+}
+
+.contact-info-box strong {
+  font-weight: 600;
+  color: var(--primary-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+}
+
+.contact-info-box a {
+  color: var(--primary-light);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contact-info-box a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* ==================================================
+   RESPONSIVE DESIGN
+   ================================================== */
+
+@media (max-width: 768px) {
+  .privacy-header {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .privacy-title {
+    font-size: 2rem;
+  }
+
+  .privacy-subtitle {
+    font-size: 1rem;
+  }
+
+  .privacy-content-section {
+    padding: 2rem 0;
+  }
+
+  .privacy-content {
+    padding: 2rem 1.5rem;
+  }
+
+  .privacy-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .privacy-content h2::before {
+    display: none; /* Hide section numbers on mobile */
+  }
+
+  .privacy-content h3 {
+    font-size: 1.15rem;
+    padding-left: 0.75rem;
+  }
+
+  .privacy-content p,
+  .privacy-content li {
+    font-size: 0.9rem;
+  }
+
+  .contact-info-box {
+    padding: 1.25rem;
+  }
+
+  .contact-info-box p {
+    padding-left: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .privacy-content {
+    padding: 1.5rem 1rem;
+    border-radius: 8px;
+  }
+
+  .privacy-content h2 {
+    font-size: 1.35rem;
+  }
+
+  .privacy-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .last-updated {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+  }
+}
+
+/* ==================================================
+   ANIMATIONS
+   ================================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.privacy-content {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.privacy-content h2,
+.privacy-content h3,
+.privacy-content p,
+.privacy-content li {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+  animation-delay: 0.1s;
+  animation-fill-mode: forwards;
+}
+
+/* ==================================================
+   PRINT STYLES
+   ================================================== */
+
+@media print {
+  .privacy-header {
+    background: none;
+    border: none;
+    padding: 1rem 0;
+  }
+
+  .privacy-content {
+    background: white;
+    color: black;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .privacy-content h2,
+  .privacy-content h3 {
+    color: black;
+    page-break-after: avoid;
+  }
+
+  .privacy-content a {
+    color: black;
+    text-decoration: underline;
+  }
+
+  .privacy-content a::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8rem;
+  }
+
+  .contact-info-box {
+    border: 1px solid black;
+    background: none;
+  }
+}
