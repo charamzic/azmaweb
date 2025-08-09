@@ -1,8 +1,3 @@
-// ==================================================
-// DEBUG VERSION - COOKIE CONSENT FUNCTIONALITY
-// ==================================================
-
-// Add debug logging to track initialization
 console.log('🔧 Script.js loading started');
 
 // Ensure functions are defined before being called
