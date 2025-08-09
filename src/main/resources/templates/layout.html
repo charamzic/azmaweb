@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com;">
+  <meta http-equiv="Content-Security-Policy"
+        content="script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com;
+               object-src 'none';
+               base-uri 'self';">
   <title th:text="${pageTitle}">Jan Charamza</title>
   <link rel="stylesheet" th:href="@{/css/style.css}">
   <link rel="stylesheet" th:href="@{/css/footer.css}">
   <link rel="stylesheet" th:href="@{/css/privacy-policy.css}">
   <link rel="stylesheet" th:href="@{/css/legal-pages.css}">
-  <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}">
 </head>
 <body>
 <nav class="navbar">
@@ -186,5 +188,32 @@
 
 
 <script th:src="@{/js/script.js}"></script>
+<script>
+  console.log('🔧 Inline debug script loaded');
+  console.log('🔧 Cookie banner element exists:', !!document.getElementById('cookieConsentBanner'));
+  console.log('🔧 Script.js functions loaded:', typeof window.acceptAllCookies);
+
+  if (typeof window.acceptAllCookies === 'undefined') {
+      console.log('⚠️ Script.js functions not loaded, creating fallbacks');
+
+      window.acceptAllCookies = function() {
+          console.log('Fallback: Accept all cookies');
+          const banner = document.getElementById('cookieConsentBanner');
+          if (banner) banner.style.display = 'none';
+      };
+
+      window.showCookieSettings = function() {
+          console.log('Fallback: Show cookie settings');
+          const overlay = document.getElementById('cookieSettingsOverlay');
+          if (overlay) overlay.classList.add('show');
+      };
+
+      window.declineCookies = function() {
+          console.log('Fallback: Decline cookies');
+          const banner = document.getElementById('cookieConsentBanner');
+          if (banner) banner.style.display = 'none';
+      };
+  }
+</script>
 </body>
 </html>
