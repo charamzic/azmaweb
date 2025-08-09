@@ -106,12 +106,12 @@
 			<scope>test</scope>
 		</dependency>
 
-<!--		&lt;!&ndash; https://mvnrepository.com/artifact/com.mailgun/mailgun-java &ndash;&gt;-->
-<!--		<dependency>-->
-<!--			<groupId>com.mailgun</groupId>-->
-<!--			<artifactId>mailgun-java</artifactId>-->
-<!--			<version>2.0.0</version>-->
-<!--		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/com.konghq/unirest-java-core -->
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>3.14.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
