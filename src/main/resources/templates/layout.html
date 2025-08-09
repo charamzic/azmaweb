@@ -77,6 +77,112 @@
   </div>
 </footer>
 
+<!-- Cookie Consent Banner -->
+<div class="cookie-consent-banner" id="cookieConsentBanner">
+  <div class="cookie-consent-container">
+    <div class="cookie-consent-content">
+      <div class="cookie-consent-title">
+        <span class="cookie-icon">🍪</span>
+        <span th:text="#{cookie.banner.title}">Cookie Notice</span>
+      </div>
+      <div class="cookie-consent-text">
+        <span th:text="#{cookie.banner.text}">We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.</span>
+        <a th:href="@{/cookie-notice}" class="cookie-consent-link" th:text="#{cookie.banner.learn.more}">Learn more in our Cookie Notice</a>.
+      </div>
+    </div>
+    <div class="cookie-consent-actions">
+      <button class="cookie-consent-btn cookie-consent-btn-decline" onclick="declineCookies()" th:text="#{cookie.banner.decline}">
+        Decline
+      </button>
+      <button class="cookie-consent-btn cookie-consent-btn-settings" onclick="showCookieSettings()" th:text="#{cookie.banner.settings}">
+        Settings
+      </button>
+      <button class="cookie-consent-btn cookie-consent-btn-accept" onclick="acceptAllCookies()" th:text="#{cookie.banner.accept}">
+        Accept All
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Cookie Settings Modal -->
+<div class="cookie-settings-overlay" id="cookieSettingsOverlay">
+  <div class="cookie-settings-modal">
+    <div class="cookie-settings-header">
+      <div class="cookie-settings-title" th:text="#{cookie.settings.title}">Cookie Settings</div>
+      <div class="cookie-settings-description" th:text="#{cookie.settings.description}">
+        Manage your cookie preferences. You can enable or disable different types of cookies below.
+      </div>
+    </div>
+
+    <div class="cookie-settings-content">
+      <!-- Essential Cookies -->
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <div class="cookie-category-title" th:text="#{cookie.category.essential.title}">Essential Cookies</div>
+          <label class="cookie-toggle">
+            <input type="checkbox" checked disabled>
+            <span class="cookie-toggle-slider"></span>
+          </label>
+        </div>
+        <div class="cookie-category-description" th:text="#{cookie.category.essential.description}">
+          These cookies are necessary for the website to function and cannot be switched off. They are usually only set in response to actions made by you which amount to a request for services.
+        </div>
+      </div>
+
+      <!-- Preference Cookies -->
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <div class="cookie-category-title" th:text="#{cookie.category.preference.title}">Preference Cookies</div>
+          <label class="cookie-toggle">
+            <input type="checkbox" id="preferenceCookies" checked>
+            <span class="cookie-toggle-slider"></span>
+          </label>
+        </div>
+        <div class="cookie-category-description" th:text="#{cookie.category.preference.description}">
+          These cookies enable the website to provide enhanced functionality and personalization. They may be set by us or by third party providers whose services we have added to our pages.
+        </div>
+      </div>
+
+      <!-- Analytics Cookies -->
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <div class="cookie-category-title" th:text="#{cookie.category.analytics.title}">Analytics Cookies</div>
+          <label class="cookie-toggle">
+            <input type="checkbox" id="analyticsCookies">
+            <span class="cookie-toggle-slider"></span>
+          </label>
+        </div>
+        <div class="cookie-category-description" th:text="#{cookie.category.analytics.description}">
+          These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our site. They help us to know which pages are the most and least popular.
+        </div>
+      </div>
+
+      <!-- Marketing Cookies -->
+      <div class="cookie-category">
+        <div class="cookie-category-header">
+          <div class="cookie-category-title" th:text="#{cookie.category.marketing.title}">Marketing Cookies</div>
+          <label class="cookie-toggle">
+            <input type="checkbox" id="marketingCookies">
+            <span class="cookie-toggle-slider"></span>
+          </label>
+        </div>
+        <div class="cookie-category-description" th:text="#{cookie.category.marketing.description}">
+          These cookies may be set through our site by our advertising partners. They may be used by those companies to build a profile of your interests and show you relevant adverts on other sites.
+        </div>
+      </div>
+    </div>
+
+    <div class="cookie-settings-actions">
+      <button class="cookie-settings-btn cookie-settings-btn-cancel" onclick="closeCookieSettings()" th:text="#{cookie.settings.cancel}">
+        Cancel
+      </button>
+      <button class="cookie-settings-btn cookie-settings-btn-save" onclick="saveCookieSettings()" th:text="#{cookie.settings.save}">
+        Save Settings
+      </button>
+    </div>
+  </div>
+</div>
+
 <script th:src="@{/js/script.js}"></script>
 </body>
 </html>
