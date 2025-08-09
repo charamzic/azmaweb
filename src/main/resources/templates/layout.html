@@ -184,5 +184,88 @@
 </div>
 
 <script th:src="@{/js/script.js}"></script>
+<!-- Přidejte před </body> v layout.html -->
+<script>
+  console.log('=== COOKIE CONSENT DEBUG ===');
+
+  // Čekáme až se DOM načte
+  document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, checking cookie consent...');
+
+      // Najdeme banner
+      const banner = document.getElementById('cookieConsentBanner');
+      console.log('Cookie banner found:', !!banner);
+
+      if (banner) {
+          console.log('Banner element:', banner);
+          console.log('Banner display:', getComputedStyle(banner).display);
+          console.log('Banner transform:', getComputedStyle(banner).transform);
+          console.log('Banner classes:', banner.className);
+
+          // Zkusíme banner zobrazit force
+          console.log('Forcing banner show...');
+          banner.style.display = 'block';
+          banner.style.position = 'fixed';
+          banner.style.bottom = '0';
+          banner.style.left = '0';
+          banner.style.right = '0';
+          banner.style.zIndex = '10000';
+          banner.style.background = 'rgba(26, 32, 44, 0.98)';
+          banner.style.padding = '1.5rem';
+          banner.style.backdropFilter = 'blur(15px)';
+          banner.style.borderTop = '2px solid #9d4edd';
+          banner.style.transform = 'translateY(0)';
+          banner.classList.add('show');
+
+          console.log('Banner forced to show');
+      } else {
+          console.error('Cookie banner element NOT found!');
+
+          // Vytvoříme banner dynamicky pro test
+          const testBanner = document.createElement('div');
+          testBanner.innerHTML = `
+              <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(26, 32, 44, 0.98); padding: 1.5rem; z-index: 10000; border-top: 2px solid #9d4edd;">
+                  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;">
+                      <div style="color: #e2e8f0;">
+                          <div style="color: #c77dff; font-weight: 600; margin-bottom: 0.5rem;">🍪 TEST Cookie Notice</div>
+                          <div>This is a test banner created dynamically. Original banner was not found in DOM.</div>
+                      </div>
+                      <div>
+                          <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: #9d4edd; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer;">Close Test</button>
+                      </div>
+                  </div>
+              </div>
+          `;
+          document.body.appendChild(testBanner);
+          console.log('Test banner created');
+      }
+
+      // Zkontrolujeme cookies
+      console.log('Current cookies:', document.cookie);
+
+      // Zkontrolujeme, jestli existují cookie funkce
+      console.log('hasGivenConsent function exists:', typeof hasGivenConsent !== 'undefined');
+      console.log('initializeCookieConsent function exists:', typeof initializeCookieConsent !== 'undefined');
+
+      // Zkusíme volat inicializaci
+      if (typeof initializeCookieConsent !== 'undefined') {
+          console.log('Calling initializeCookieConsent...');
+          initializeCookieConsent();
+      } else {
+          console.error('initializeCookieConsent function not found!');
+      }
+  });
+
+  // Test po 3 sekundách
+  setTimeout(() => {
+      console.log('=== 3 SECOND CHECK ===');
+      const banner = document.getElementById('cookieConsentBanner');
+      if (banner) {
+          console.log('Banner still exists after 3s');
+          console.log('Banner visible:', banner.offsetHeight > 0);
+          console.log('Banner classes:', banner.className);
+      }
+  }, 3000);
+</script>
 </body>
 </html>
