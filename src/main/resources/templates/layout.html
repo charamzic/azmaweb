@@ -184,278 +184,33 @@
 </div>
 
 <script>
-  console.log('=== COOKIE CONSENT INLINE SCRIPT LOADED ===');
-
-  function setCookiePreference(type, value) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      document.cookie = `cookie_${type}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-      console.log(`Cookie preference set: ${type} = ${value}`);
-  }
-
-  function setCookieConsentStatus(status) {
-      const expires = new Date();
-      expires.setFullYear(expires.getFullYear() + 1);
-      document.cookie = `cookie_consent=${status}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-      console.log(`Cookie consent status set: ${status}`);
-  }
-
-  function getCookieValue(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-      return null;
-  }
-
-  function hasGivenConsent() {
-      const consent = getCookieValue('cookie_consent');
-      return consent !== null;
-  }
-
-  function getCookiePreference(type) {
-      return getCookieValue(`cookie_${type}`) === 'true';
-  }
-
-  function showCookieBanner() {
-      const banner = document.getElementById('cookieConsentBanner');
-      if (banner) {
-          banner.classList.add('show');
-          console.log('Cookie banner shown');
-      } else {
-          console.error('Cookie banner element not found');
-      }
-  }
-
-  function hideCookieBanner() {
-      const banner = document.getElementById('cookieConsentBanner');
-      if (banner) {
-          banner.classList.remove('show');
-          console.log('Cookie banner hidden');
-      }
-  }
-
-  function showCookieSettings() {
-      const overlay = document.getElementById('cookieSettingsOverlay');
-      if (overlay) {
-          overlay.classList.add('show');
-          document.body.style.overflow = 'hidden';
-          loadCookiePreferences();
-          console.log('Cookie settings shown');
-      }
-  }
-
-  function closeCookieSettings() {
-      const overlay = document.getElementById('cookieSettingsOverlay');
-      if (overlay) {
-          overlay.classList.remove('show');
-          document.body.style.overflow = '';
-          console.log('Cookie settings closed');
-      }
-  }
-
-  function acceptAllCookies() {
-      console.log('Accepting all cookies...');
-      setCookiePreference('essential', true);
-      setCookiePreference('preference', true);
-      setCookiePreference('analytics', true);
-      setCookiePreference('marketing', true);
-      setCookieConsentStatus('accepted');
-      hideCookieBanner();
-      initializeOptionalServices();
-      showNotification('All cookies accepted', 'success');
-  }
-
-  function declineCookies() {
-      console.log('Declining optional cookies...');
-      setCookiePreference('essential', true);
-      setCookiePreference('preference', false);
-      setCookiePreference('analytics', false);
-      setCookiePreference('marketing', false);
-      setCookieConsentStatus('declined');
-      hideCookieBanner();
-      showNotification('Optional cookies declined', 'info');
-  }
-
-  function saveCookieSettings() {
-      console.log('Saving cookie settings...');
-      const preferences = document.getElementById('preferenceCookies')?.checked || false;
-      const analytics = document.getElementById('analyticsCookies')?.checked || false;
-      const marketing = document.getElementById('marketingCookies')?.checked || false;
-
-      setCookiePreference('essential', true);
-      setCookiePreference('preference', preferences);
-      setCookiePreference('analytics', analytics);
-      setCookiePreference('marketing', marketing);
-      setCookieConsentStatus('customized');
-
-      closeCookieSettings();
-      hideCookieBanner();
-      initializeOptionalServices();
-      showNotification('Cookie preferences saved', 'success');
-  }
-
-  function loadCookiePreferences() {
-      const preferences = getCookieValue('cookie_preference') === 'true';
-      const analytics = getCookieValue('cookie_analytics') === 'true';
-      const marketing = getCookieValue('cookie_marketing') === 'true';
-
-      const preferencesCheckbox = document.getElementById('preferenceCookies');
-      const analyticsCheckbox = document.getElementById('analyticsCookies');
-      const marketingCheckbox = document.getElementById('marketingCookies');
-
-      if (preferencesCheckbox) preferencesCheckbox.checked = preferences;
-      if (analyticsCheckbox) analyticsCheckbox.checked = analytics;
-      if (marketingCheckbox) marketingCheckbox.checked = marketing;
-  }
-
-  function initializeOptionalServices() {
-      if (getCookiePreference('analytics')) {
-          initializeAnalytics();
-      }
-      if (getCookiePreference('marketing')) {
-          initializeMarketing();
-      }
-      if (getCookiePreference('preference')) {
-          initializePreferences();
-      }
-  }
-
-  function initializeAnalytics() {
-      console.log('Analytics cookies enabled - initializing analytics');
-  }
-
-  function initializeMarketing() {
-      console.log('Marketing cookies enabled - initializing marketing tools');
-  }
-
-  function initializePreferences() {
-      console.log('Preference cookies enabled - initializing personalization');
-  }
-
-  function showNotification(message, type = 'info') {
-      const notification = document.createElement('div');
-      notification.className = `notification notification-${type}`;
-      notification.textContent = message;
-
-      Object.assign(notification.style, {
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          padding: '1rem 1.5rem',
-          backgroundColor: type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6',
-          color: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
-          zIndex: '9999',
-          transform: 'translateX(100%)',
-          transition: 'transform 0.3s ease',
-          maxWidth: '300px',
-          wordWrap: 'break-word'
-      });
-
-      document.body.appendChild(notification);
-
-      setTimeout(() => {
-          notification.style.transform = 'translateX(0)';
-      }, 100);
-
-      setTimeout(() => {
-          notification.style.transform = 'translateX(100%)';
-          setTimeout(() => {
-              if (notification.parentNode) {
-                  notification.parentNode.removeChild(notification);
-              }
-          }, 300);
-      }, 5000);
-  }
-
   function initializeCookieConsent() {
-      console.log('Initializing cookie consent...');
-
-      if (!hasGivenConsent()) {
-          console.log('No consent given, showing banner in 1.5s...');
-          setTimeout(() => {
-              showCookieBanner();
-          }, 1500);
-      } else {
-          console.log('Consent already given, initializing services...');
-          initializeOptionalServices();
-      }
-
-      const cookieSettingsOverlay = document.getElementById('cookieSettingsOverlay');
-      if (cookieSettingsOverlay) {
-          cookieSettingsOverlay.addEventListener('click', function(e) {
-              if (e.target === this) {
-                  closeCookieSettings();
-              }
-          });
-      }
-
-      document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-              const overlay = document.getElementById('cookieSettingsOverlay');
-              if (overlay && overlay.classList.contains('show')) {
-                  closeCookieSettings();
-              }
+      console.log('Quick cookie consent init');
+      setTimeout(() => {
+          const banner = document.getElementById('cookieConsentBanner');
+          if (banner && !document.cookie.includes('cookie_consent=')) {
+              banner.classList.add('show');
+              console.log('Banner shown');
           }
-      });
+      }, 1500);
   }
 
-  function initializeMobileNav() {
-      const hamburger = document.getElementById('hamburger');
-      const navMenu = document.getElementById('nav-menu');
+  window.acceptAllCookies = function() {
+      document.cookie = 'cookie_consent=accepted; path=/; max-age=31536000';
+      document.getElementById('cookieConsentBanner').classList.remove('show');
+  };
 
-      if (hamburger && navMenu) {
-          hamburger.addEventListener('click', function() {
-              hamburger.classList.toggle('active');
-              navMenu.classList.toggle('active');
-          });
+  window.declineCookies = function() {
+      document.cookie = 'cookie_consent=declined; path=/; max-age=31536000';
+      document.getElementById('cookieConsentBanner').classList.remove('show');
+  };
 
-          const navLinks = document.querySelectorAll('.nav-link');
-          navLinks.forEach(link => {
-              link.addEventListener('click', function() {
-                  hamburger.classList.remove('active');
-                  navMenu.classList.remove('active');
-              });
-          });
+  window.showCookieSettings = function() {
+      alert('Cookie settings - use Accept All or Decline for now');
+  };
 
-          document.addEventListener('click', function(event) {
-              const isClickInsideNav = navMenu.contains(event.target);
-              const isClickOnHamburger = hamburger.contains(event.target);
-
-              if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
-                  hamburger.classList.remove('active');
-                  navMenu.classList.remove('active');
-              }
-          });
-      }
-  }
-
-  window.showCookieBanner = showCookieBanner;
-  window.hideCookieBanner = hideCookieBanner;
-  window.showCookieSettings = showCookieSettings;
-  window.closeCookieSettings = closeCookieSettings;
-  window.acceptAllCookies = acceptAllCookies;
-  window.declineCookies = declineCookies;
-  window.saveCookieSettings = saveCookieSettings;
-  window.initializeCookieConsent = initializeCookieConsent;
-  window.showNotification = showNotification;
-
-  document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded - starting initialization');
-
-      initializeMobileNav();
-
-      initializeCookieConsent();
-
-      const banner = document.getElementById('cookieConsentBanner');
-      console.log('Cookie banner found:', !!banner);
-      console.log('Has consent:', hasGivenConsent());
-
-      console.log('=== INITIALIZATION COMPLETE ===');
-  });
+  document.addEventListener('DOMContentLoaded', initializeCookieConsent);
 </script>
-
 <script th:src="@{/js/script.js}" async onerror="console.log('External script failed to load, using inline version')"></script>
 </body>
 </html>
