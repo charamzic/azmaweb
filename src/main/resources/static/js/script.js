@@ -1,10 +1,13 @@
-// ==================================================
-// COOKIE CONSENT FUNCTIONALITY
-// ==================================================
+
+let cookieConsentInitialized = false;
+
 function showCookieBanner() {
     const banner = document.getElementById('cookieConsentBanner');
     if (banner) {
         banner.classList.add('show');
+        console.log('Cookie banner shown');
+    } else {
+        console.error('Cookie banner element not found');
     }
 }
 
@@ -12,6 +15,7 @@ function hideCookieBanner() {
     const banner = document.getElementById('cookieConsentBanner');
     if (banner) {
         banner.classList.remove('show');
+        console.log('Cookie banner hidden');
     }
 }
 
@@ -23,6 +27,9 @@ function showCookieSettings() {
 
         // Load current preferences into the modal
         loadCookiePreferences();
+        console.log('Cookie settings shown');
+    } else {
+        console.error('Cookie settings overlay not found');
     }
 }
 
@@ -31,10 +38,12 @@ function closeCookieSettings() {
     if (overlay) {
         overlay.classList.remove('show');
         document.body.style.overflow = '';
+        console.log('Cookie settings closed');
     }
 }
 
 function acceptAllCookies() {
+    console.log('Accepting all cookies');
     // Set all cookie preferences to true
     setCookiePreference('essential', true);
     setCookiePreference('preference', true);
@@ -55,6 +64,7 @@ function acceptAllCookies() {
 }
 
 function declineCookies() {
+    console.log('Declining cookies');
     // Set only essential cookies to true, others to false
     setCookiePreference('essential', true);
     setCookiePreference('preference', false);
@@ -72,6 +82,7 @@ function declineCookies() {
 }
 
 function saveCookieSettings() {
+    console.log('Saving cookie settings');
     // Get checkbox states
     const preferences = document.getElementById('preferenceCookies')?.checked || false;
     const analytics = document.getElementById('analyticsCookies')?.checked || false;
@@ -99,62 +110,97 @@ function saveCookieSettings() {
 
 // Load current cookie preferences into the settings modal
 function loadCookiePreferences() {
-    const preferences = getCookieValue('cookie_preference') === 'true';
-    const analytics = getCookieValue('cookie_analytics') === 'true';
-    const marketing = getCookieValue('cookie_marketing') === 'true';
+    try {
+        const preferences = getCookieValue('cookie_preference') === 'true';
+        const analytics = getCookieValue('cookie_analytics') === 'true';
+        const marketing = getCookieValue('cookie_marketing') === 'true';
 
-    const preferencesCheckbox = document.getElementById('preferenceCookies');
-    const analyticsCheckbox = document.getElementById('analyticsCookies');
-    const marketingCheckbox = document.getElementById('marketingCookies');
+        const preferencesCheckbox = document.getElementById('preferenceCookies');
+        const analyticsCheckbox = document.getElementById('analyticsCookies');
+        const marketingCheckbox = document.getElementById('marketingCookies');
 
-    if (preferencesCheckbox) preferencesCheckbox.checked = preferences;
-    if (analyticsCheckbox) analyticsCheckbox.checked = analytics;
-    if (marketingCheckbox) marketingCheckbox.checked = marketing;
+        if (preferencesCheckbox) preferencesCheckbox.checked = preferences;
+        if (analyticsCheckbox) analyticsCheckbox.checked = analytics;
+        if (marketingCheckbox) marketingCheckbox.checked = marketing;
+
+        console.log('Cookie preferences loaded:', { preferences, analytics, marketing });
+    } catch (error) {
+        console.error('Error loading cookie preferences:', error);
+    }
 }
 
 // Utility functions for cookie management
 function setCookiePreference(type, value) {
-    const expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 1);
-    document.cookie = `cookie_${type}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-    console.log(`Cookie preference set: ${type} = ${value}`);
+    try {
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 1);
+        document.cookie = `cookie_${type}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+        console.log(`Cookie preference set: ${type} = ${value}`);
+    } catch (error) {
+        console.error(`Error setting cookie preference ${type}:`, error);
+    }
 }
 
 function setCookieConsentStatus(status) {
-    const expires = new Date();
-    expires.setFullYear(expires.getFullYear() + 1);
-    document.cookie = `cookie_consent=${status}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-    console.log(`Cookie consent status set: ${status}`);
+    try {
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 1);
+        document.cookie = `cookie_consent=${status}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+        console.log(`Cookie consent status set: ${status}`);
+    } catch (error) {
+        console.error('Error setting cookie consent status:', error);
+    }
 }
 
 function getCookieValue(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
+    try {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        return null;
+    } catch (error) {
+        console.error(`Error getting cookie value ${name}:`, error);
+        return null;
+    }
 }
 
 function hasGivenConsent() {
-    const consent = getCookieValue('cookie_consent');
-    return consent !== null;
+    try {
+        const consent = getCookieValue('cookie_consent');
+        const hasConsent = consent !== null;
+        console.log('Has given consent:', hasConsent, 'Value:', consent);
+        return hasConsent;
+    } catch (error) {
+        console.error('Error checking consent:', error);
+        return false;
+    }
 }
 
 function getCookiePreference(type) {
-    return getCookieValue(`cookie_${type}`) === 'true';
+    try {
+        return getCookieValue(`cookie_${type}`) === 'true';
+    } catch (error) {
+        console.error(`Error getting cookie preference ${type}:`, error);
+        return false;
+    }
 }
 
 // Initialize optional services based on cookie preferences
 function initializeOptionalServices() {
-    if (getCookiePreference('analytics')) {
-        initializeAnalytics();
-    }
+    try {
+        if (getCookiePreference('analytics')) {
+            initializeAnalytics();
+        }
 
-    if (getCookiePreference('marketing')) {
-        initializeMarketing();
-    }
+        if (getCookiePreference('marketing')) {
+            initializeMarketing();
+        }
 
-    if (getCookiePreference('preference')) {
-        initializePreferences();
+        if (getCookiePreference('preference')) {
+            initializePreferences();
+        }
+    } catch (error) {
+        console.error('Error initializing optional services:', error);
     }
 }
 
@@ -162,19 +208,11 @@ function initializeOptionalServices() {
 function initializeAnalytics() {
     console.log('Analytics cookies enabled - initializing analytics');
     // Initialize Google Analytics, Matomo, etc.
-    // Example:
-    // gtag('consent', 'update', {
-    //     'analytics_storage': 'granted'
-    // });
 }
 
 function initializeMarketing() {
     console.log('Marketing cookies enabled - initializing marketing tools');
     // Initialize advertising pixels, remarketing tags, etc.
-    // Example:
-    // gtag('consent', 'update', {
-    //     'ad_storage': 'granted'
-    // });
 }
 
 function initializePreferences() {
@@ -182,36 +220,62 @@ function initializePreferences() {
     // Load user preferences, theme settings, etc.
 }
 
-// Cookie consent initialization
+// Cookie consent initialization - IMPROVED
 function initializeCookieConsent() {
-    if (!hasGivenConsent()) {
-        setTimeout(() => {
-            showCookieBanner();
-        }, 1500);
-    } else {
-        initializeOptionalServices();
-    }
+    try {
+        console.log('Initializing cookie consent...');
 
-    // Set up event listeners for the cookie settings modal
-    const cookieSettingsOverlay = document.getElementById('cookieSettingsOverlay');
-    if (cookieSettingsOverlay) {
-        // Close modal when clicking outside
-        cookieSettingsOverlay.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeCookieSettings();
+        // Check if elements exist
+        const banner = document.getElementById('cookieConsentBanner');
+        const overlay = document.getElementById('cookieSettingsOverlay');
+
+        if (!banner) {
+            console.error('Cookie consent banner element not found in DOM');
+            return;
+        }
+
+        if (!overlay) {
+            console.error('Cookie settings overlay element not found in DOM');
+            return;
+        }
+
+        console.log('Cookie consent elements found');
+
+        if (!hasGivenConsent()) {
+            console.log('No consent given, showing banner after delay');
+            setTimeout(() => {
+                showCookieBanner();
+            }, 1500);
+        } else {
+            console.log('Consent already given, initializing services');
+            initializeOptionalServices();
+        }
+
+        // Set up event listeners for the cookie settings modal
+        if (overlay) {
+            // Close modal when clicking outside
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeCookieSettings();
+                }
+            });
+        }
+
+        // Handle ESC key for closing modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const settingsOverlay = document.getElementById('cookieSettingsOverlay');
+                if (settingsOverlay && settingsOverlay.classList.contains('show')) {
+                    closeCookieSettings();
+                }
             }
         });
-    }
 
-    // Handle ESC key for closing modal
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const overlay = document.getElementById('cookieSettingsOverlay');
-            if (overlay && overlay.classList.contains('show')) {
-                closeCookieSettings();
-            }
-        }
-    });
+        cookieConsentInitialized = true;
+        console.log('Cookie consent initialization completed');
+    } catch (error) {
+        console.error('Error initializing cookie consent:', error);
+    }
 }
 
 // Function to check if specific cookie types are allowed
@@ -221,20 +285,34 @@ function areCookiesAllowed(type) {
 
 // Function to revoke consent (for settings page or user preference)
 function revokeCookieConsent() {
-    // Remove all consent cookies
-    const cookieTypes = ['essential', 'preference', 'analytics', 'marketing'];
-    cookieTypes.forEach(type => {
-        document.cookie = `cookie_${type}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    });
-    document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    try {
+        console.log('Revoking cookie consent');
+        // Remove all consent cookies
+        const cookieTypes = ['essential', 'preference', 'analytics', 'marketing'];
+        cookieTypes.forEach(type => {
+            document.cookie = `cookie_${type}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        });
+        document.cookie = `cookie_consent=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 
-    // Show banner again
-    showCookieBanner();
+        // Show banner again
+        showCookieBanner();
 
-    if (window.showNotification) {
-        showNotification(getLocalizedText('cookie.notification.revoked', 'Cookie consent revoked'), 'info');
+        if (window.showNotification) {
+            showNotification(getLocalizedText('cookie.notification.revoked', 'Cookie consent revoked'), 'info');
+        }
+    } catch (error) {
+        console.error('Error revoking cookie consent:', error);
     }
 }
+
+// Make functions available globally IMMEDIATELY
+window.showCookieBanner = showCookieBanner;
+window.hideCookieBanner = hideCookieBanner;
+window.showCookieSettings = showCookieSettings;
+window.closeCookieSettings = closeCookieSettings;
+window.acceptAllCookies = acceptAllCookies;
+window.declineCookies = declineCookies;
+window.saveCookieSettings = saveCookieSettings;
 
 // Make functions available globally for potential external use
 window.cookieConsent = {
@@ -243,12 +321,31 @@ window.cookieConsent = {
     showSettings: showCookieSettings,
     isAllowed: areCookiesAllowed,
     revoke: revokeCookieConsent,
-    hasConsent: hasGivenConsent
+    hasConsent: hasGivenConsent,
+    initialized: () => cookieConsentInitialized
 };
 
+// ENSURE EARLY INITIALIZATION - Multiple approaches
+// 1. If DOM is already loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCookieConsent);
+} else {
+    // DOM already loaded
+    initializeCookieConsent();
+}
+
+// 2. Also try on window load as backup
+window.addEventListener('load', function() {
+    if (!cookieConsentInitialized) {
+        console.log('Backup initialization on window load');
+        initializeCookieConsent();
+    }
+});
 
 // Mobile Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded - Main initialization');
+
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
 
@@ -621,7 +718,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    initializeCookieConsent();
+    // Final cookie consent check - run this last
+    if (!cookieConsentInitialized) {
+        console.log('Final cookie consent initialization check');
+        initializeCookieConsent();
+    }
 });
 
 // Utility functions
@@ -657,7 +758,7 @@ function copyToClipboard(text) {
 // Error handling for global errors
 window.addEventListener('error', function(e) {
     console.error('Global error:', e.error);
-    // Could send error to logging service in production if not lazy
+    // Could send error to logging service in production
 });
 
 // Service Worker registration for PWA (optional)

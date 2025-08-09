@@ -183,34 +183,7 @@
   </div>
 </div>
 
-<script>
-  function initializeCookieConsent() {
-      console.log('Quick cookie consent init');
-      setTimeout(() => {
-          const banner = document.getElementById('cookieConsentBanner');
-          if (banner && !document.cookie.includes('cookie_consent=')) {
-              banner.classList.add('show');
-              console.log('Banner shown');
-          }
-      }, 1500);
-  }
 
-  window.acceptAllCookies = function() {
-      document.cookie = 'cookie_consent=accepted; path=/; max-age=31536000';
-      document.getElementById('cookieConsentBanner').classList.remove('show');
-  };
-
-  window.declineCookies = function() {
-      document.cookie = 'cookie_consent=declined; path=/; max-age=31536000';
-      document.getElementById('cookieConsentBanner').classList.remove('show');
-  };
-
-  window.showCookieSettings = function() {
-      alert('Cookie settings - use Accept All or Decline for now');
-  };
-
-  document.addEventListener('DOMContentLoaded', initializeCookieConsent);
-</script>
-<script th:src="@{/js/script.js}" async onerror="console.log('External script failed to load, using inline version')"></script>
+<script th:src="@{/js/script.js}"></script>
 </body>
 </html>
