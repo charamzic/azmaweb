@@ -183,89 +183,279 @@
   </div>
 </div>
 
-<script th:src="@{/js/script.js}"></script>
-<!-- Přidejte před </body> v layout.html -->
 <script>
-  console.log('=== COOKIE CONSENT DEBUG ===');
+  console.log('=== COOKIE CONSENT INLINE SCRIPT LOADED ===');
 
-  // Čekáme až se DOM načte
+  function setCookiePreference(type, value) {
+      const expires = new Date();
+      expires.setFullYear(expires.getFullYear() + 1);
+      document.cookie = `cookie_${type}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      console.log(`Cookie preference set: ${type} = ${value}`);
+  }
+
+  function setCookieConsentStatus(status) {
+      const expires = new Date();
+      expires.setFullYear(expires.getFullYear() + 1);
+      document.cookie = `cookie_consent=${status}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      console.log(`Cookie consent status set: ${status}`);
+  }
+
+  function getCookieValue(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+  }
+
+  function hasGivenConsent() {
+      const consent = getCookieValue('cookie_consent');
+      return consent !== null;
+  }
+
+  function getCookiePreference(type) {
+      return getCookieValue(`cookie_${type}`) === 'true';
+  }
+
+  function showCookieBanner() {
+      const banner = document.getElementById('cookieConsentBanner');
+      if (banner) {
+          banner.classList.add('show');
+          console.log('Cookie banner shown');
+      } else {
+          console.error('Cookie banner element not found');
+      }
+  }
+
+  function hideCookieBanner() {
+      const banner = document.getElementById('cookieConsentBanner');
+      if (banner) {
+          banner.classList.remove('show');
+          console.log('Cookie banner hidden');
+      }
+  }
+
+  function showCookieSettings() {
+      const overlay = document.getElementById('cookieSettingsOverlay');
+      if (overlay) {
+          overlay.classList.add('show');
+          document.body.style.overflow = 'hidden';
+          loadCookiePreferences();
+          console.log('Cookie settings shown');
+      }
+  }
+
+  function closeCookieSettings() {
+      const overlay = document.getElementById('cookieSettingsOverlay');
+      if (overlay) {
+          overlay.classList.remove('show');
+          document.body.style.overflow = '';
+          console.log('Cookie settings closed');
+      }
+  }
+
+  function acceptAllCookies() {
+      console.log('Accepting all cookies...');
+      setCookiePreference('essential', true);
+      setCookiePreference('preference', true);
+      setCookiePreference('analytics', true);
+      setCookiePreference('marketing', true);
+      setCookieConsentStatus('accepted');
+      hideCookieBanner();
+      initializeOptionalServices();
+      showNotification('All cookies accepted', 'success');
+  }
+
+  function declineCookies() {
+      console.log('Declining optional cookies...');
+      setCookiePreference('essential', true);
+      setCookiePreference('preference', false);
+      setCookiePreference('analytics', false);
+      setCookiePreference('marketing', false);
+      setCookieConsentStatus('declined');
+      hideCookieBanner();
+      showNotification('Optional cookies declined', 'info');
+  }
+
+  function saveCookieSettings() {
+      console.log('Saving cookie settings...');
+      const preferences = document.getElementById('preferenceCookies')?.checked || false;
+      const analytics = document.getElementById('analyticsCookies')?.checked || false;
+      const marketing = document.getElementById('marketingCookies')?.checked || false;
+
+      setCookiePreference('essential', true);
+      setCookiePreference('preference', preferences);
+      setCookiePreference('analytics', analytics);
+      setCookiePreference('marketing', marketing);
+      setCookieConsentStatus('customized');
+
+      closeCookieSettings();
+      hideCookieBanner();
+      initializeOptionalServices();
+      showNotification('Cookie preferences saved', 'success');
+  }
+
+  function loadCookiePreferences() {
+      const preferences = getCookieValue('cookie_preference') === 'true';
+      const analytics = getCookieValue('cookie_analytics') === 'true';
+      const marketing = getCookieValue('cookie_marketing') === 'true';
+
+      const preferencesCheckbox = document.getElementById('preferenceCookies');
+      const analyticsCheckbox = document.getElementById('analyticsCookies');
+      const marketingCheckbox = document.getElementById('marketingCookies');
+
+      if (preferencesCheckbox) preferencesCheckbox.checked = preferences;
+      if (analyticsCheckbox) analyticsCheckbox.checked = analytics;
+      if (marketingCheckbox) marketingCheckbox.checked = marketing;
+  }
+
+  function initializeOptionalServices() {
+      if (getCookiePreference('analytics')) {
+          initializeAnalytics();
+      }
+      if (getCookiePreference('marketing')) {
+          initializeMarketing();
+      }
+      if (getCookiePreference('preference')) {
+          initializePreferences();
+      }
+  }
+
+  function initializeAnalytics() {
+      console.log('Analytics cookies enabled - initializing analytics');
+  }
+
+  function initializeMarketing() {
+      console.log('Marketing cookies enabled - initializing marketing tools');
+  }
+
+  function initializePreferences() {
+      console.log('Preference cookies enabled - initializing personalization');
+  }
+
+  function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.textContent = message;
+
+      Object.assign(notification.style, {
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          padding: '1rem 1.5rem',
+          backgroundColor: type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6',
+          color: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+          zIndex: '9999',
+          transform: 'translateX(100%)',
+          transition: 'transform 0.3s ease',
+          maxWidth: '300px',
+          wordWrap: 'break-word'
+      });
+
+      document.body.appendChild(notification);
+
+      setTimeout(() => {
+          notification.style.transform = 'translateX(0)';
+      }, 100);
+
+      setTimeout(() => {
+          notification.style.transform = 'translateX(100%)';
+          setTimeout(() => {
+              if (notification.parentNode) {
+                  notification.parentNode.removeChild(notification);
+              }
+          }, 300);
+      }, 5000);
+  }
+
+  function initializeCookieConsent() {
+      console.log('Initializing cookie consent...');
+
+      if (!hasGivenConsent()) {
+          console.log('No consent given, showing banner in 1.5s...');
+          setTimeout(() => {
+              showCookieBanner();
+          }, 1500);
+      } else {
+          console.log('Consent already given, initializing services...');
+          initializeOptionalServices();
+      }
+
+      const cookieSettingsOverlay = document.getElementById('cookieSettingsOverlay');
+      if (cookieSettingsOverlay) {
+          cookieSettingsOverlay.addEventListener('click', function(e) {
+              if (e.target === this) {
+                  closeCookieSettings();
+              }
+          });
+      }
+
+      document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+              const overlay = document.getElementById('cookieSettingsOverlay');
+              if (overlay && overlay.classList.contains('show')) {
+                  closeCookieSettings();
+              }
+          }
+      });
+  }
+
+  function initializeMobileNav() {
+      const hamburger = document.getElementById('hamburger');
+      const navMenu = document.getElementById('nav-menu');
+
+      if (hamburger && navMenu) {
+          hamburger.addEventListener('click', function() {
+              hamburger.classList.toggle('active');
+              navMenu.classList.toggle('active');
+          });
+
+          const navLinks = document.querySelectorAll('.nav-link');
+          navLinks.forEach(link => {
+              link.addEventListener('click', function() {
+                  hamburger.classList.remove('active');
+                  navMenu.classList.remove('active');
+              });
+          });
+
+          document.addEventListener('click', function(event) {
+              const isClickInsideNav = navMenu.contains(event.target);
+              const isClickOnHamburger = hamburger.contains(event.target);
+
+              if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                  hamburger.classList.remove('active');
+                  navMenu.classList.remove('active');
+              }
+          });
+      }
+  }
+
+  window.showCookieBanner = showCookieBanner;
+  window.hideCookieBanner = hideCookieBanner;
+  window.showCookieSettings = showCookieSettings;
+  window.closeCookieSettings = closeCookieSettings;
+  window.acceptAllCookies = acceptAllCookies;
+  window.declineCookies = declineCookies;
+  window.saveCookieSettings = saveCookieSettings;
+  window.initializeCookieConsent = initializeCookieConsent;
+  window.showNotification = showNotification;
+
   document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, checking cookie consent...');
+      console.log('DOM loaded - starting initialization');
 
-      // Najdeme banner
+      initializeMobileNav();
+
+      initializeCookieConsent();
+
       const banner = document.getElementById('cookieConsentBanner');
       console.log('Cookie banner found:', !!banner);
+      console.log('Has consent:', hasGivenConsent());
 
-      if (banner) {
-          console.log('Banner element:', banner);
-          console.log('Banner display:', getComputedStyle(banner).display);
-          console.log('Banner transform:', getComputedStyle(banner).transform);
-          console.log('Banner classes:', banner.className);
-
-          // Zkusíme banner zobrazit force
-          console.log('Forcing banner show...');
-          banner.style.display = 'block';
-          banner.style.position = 'fixed';
-          banner.style.bottom = '0';
-          banner.style.left = '0';
-          banner.style.right = '0';
-          banner.style.zIndex = '10000';
-          banner.style.background = 'rgba(26, 32, 44, 0.98)';
-          banner.style.padding = '1.5rem';
-          banner.style.backdropFilter = 'blur(15px)';
-          banner.style.borderTop = '2px solid #9d4edd';
-          banner.style.transform = 'translateY(0)';
-          banner.classList.add('show');
-
-          console.log('Banner forced to show');
-      } else {
-          console.error('Cookie banner element NOT found!');
-
-          // Vytvoříme banner dynamicky pro test
-          const testBanner = document.createElement('div');
-          testBanner.innerHTML = `
-              <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(26, 32, 44, 0.98); padding: 1.5rem; z-index: 10000; border-top: 2px solid #9d4edd;">
-                  <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;">
-                      <div style="color: #e2e8f0;">
-                          <div style="color: #c77dff; font-weight: 600; margin-bottom: 0.5rem;">🍪 TEST Cookie Notice</div>
-                          <div>This is a test banner created dynamically. Original banner was not found in DOM.</div>
-                      </div>
-                      <div>
-                          <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: #9d4edd; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer;">Close Test</button>
-                      </div>
-                  </div>
-              </div>
-          `;
-          document.body.appendChild(testBanner);
-          console.log('Test banner created');
-      }
-
-      // Zkontrolujeme cookies
-      console.log('Current cookies:', document.cookie);
-
-      // Zkontrolujeme, jestli existují cookie funkce
-      console.log('hasGivenConsent function exists:', typeof hasGivenConsent !== 'undefined');
-      console.log('initializeCookieConsent function exists:', typeof initializeCookieConsent !== 'undefined');
-
-      // Zkusíme volat inicializaci
-      if (typeof initializeCookieConsent !== 'undefined') {
-          console.log('Calling initializeCookieConsent...');
-          initializeCookieConsent();
-      } else {
-          console.error('initializeCookieConsent function not found!');
-      }
+      console.log('=== INITIALIZATION COMPLETE ===');
   });
-
-  // Test po 3 sekundách
-  setTimeout(() => {
-      console.log('=== 3 SECOND CHECK ===');
-      const banner = document.getElementById('cookieConsentBanner');
-      if (banner) {
-          console.log('Banner still exists after 3s');
-          console.log('Banner visible:', banner.offsetHeight > 0);
-          console.log('Banner classes:', banner.className);
-      }
-  }, 3000);
 </script>
+
+<script th:src="@{/js/script.js}" async onerror="console.log('External script failed to load, using inline version')"></script>
 </body>
 </html>
