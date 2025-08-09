@@ -186,14 +186,13 @@
   </div>
 </div>
 
-
 <script>
-  console.log('🔧 Debug: Testing script.js availability...');
+  console.log('🔧 Debug: Testing script-v2.js availability...');
 
-  // Test dostupnosti script.js
-  fetch('/js/script.js')
+  // Test dostupnosti script-v2.js (ne script.js!)
+  fetch('/js/script-v2.js')
       .then(response => {
-          console.log('📁 script.js HTTP status:', response.status);
+          console.log('📁 script-v2.js HTTP status:', response.status);
           if (response.ok) {
               return response.text();
           } else {
@@ -201,219 +200,41 @@
           }
       })
       .then(text => {
-          console.log('✅ script.js loaded successfully, size:', text.length);
+          console.log('✅ script-v2.js loaded successfully, size:', text.length);
       })
       .catch(error => {
-          console.error('❌ script.js failed to load:', error);
+          console.error('❌ script-v2.js failed to load:', error);
       });
 </script>
 
-<script th:src="@{/js/script-v2.js}"></script>
+<script th:src="@{/js/script-v3.js(v='1.1.0')}"></script>
 
 <script>
-  console.log('🔧 Comprehensive fallback script loaded');
+  console.log('🔧 Cookie banner element exists:', !!document.getElementById('cookieConsentBanner'));
+  console.log('🔧 Script functions loaded:', typeof window.acceptAllCookies);
 
-  document.addEventListener('DOMContentLoaded', function() {
-      console.log('🔧 DOM loaded, initializing cookie system...');
+  if (typeof window.acceptAllCookies === 'undefined') {
+      console.log('⚠️ Script functions not loaded, creating minimal fallbacks');
 
-      // Počkejte chvilku na načtení hlavního scriptu
-      setTimeout(function() {
-          console.log('🔧 Checking script.js functions after delay...');
-          console.log('🔧 acceptAllCookies type:', typeof window.acceptAllCookies);
+      window.acceptAllCookies = function() {
+          console.log('Minimal fallback: Accept all cookies');
+          document.cookie = 'cookie_consent=accepted; path=/; max-age=' + (365*24*60*60);
+          const banner = document.getElementById('cookieConsentBanner');
+          if (banner) banner.style.display = 'none';
+      };
 
-          if (typeof window.acceptAllCookies === 'undefined') {
-              console.log('⚠️ Main script not loaded, initializing comprehensive fallback');
+      window.declineCookies = function() {
+          console.log('Minimal fallback: Decline cookies');
+          document.cookie = 'cookie_consent=declined; path=/; max-age=' + (365*24*60*60);
+          const banner = document.getElementById('cookieConsentBanner');
+          if (banner) banner.style.display = 'none';
+      };
 
-              // === UTILITY FUNCTIONS ===
-              function setCookieValue(name, value, days = 365) {
-                  try {
-                      const expires = new Date();
-                      expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-                      document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax; Secure`;
-                      console.log(`✅ Cookie set: ${name} = ${value}`);
-                  } catch (error) {
-                      console.error(`❌ Error setting cookie ${name}:`, error);
-                  }
-              }
-
-              function getCookieValue(name) {
-                  try {
-                      const value = `; ${document.cookie}`;
-                      const parts = value.split(`; ${name}=`);
-                      if (parts.length === 2) return parts.pop().split(';').shift();
-                      return null;
-                  } catch (error) {
-                      console.error(`❌ Error getting cookie ${name}:`, error);
-                      return null;
-                  }
-              }
-
-              function hasGivenConsent() {
-                  const consent = getCookieValue('cookie_consent');
-                  return consent !== null;
-              }
-
-              function hideBanner() {
-                  const banner = document.getElementById('cookieConsentBanner');
-                  if (banner) {
-                      banner.classList.remove('show');
-                      banner.style.display = 'none';
-                      console.log('✅ Banner hidden');
-                  }
-              }
-
-              function showBanner() {
-                  const banner = document.getElementById('cookieConsentBanner');
-                  if (banner) {
-                      banner.classList.add('show');
-                      banner.style.display = 'block';
-                      console.log('✅ Banner shown');
-                  }
-              }
-
-              function createNotification(message, type = 'info') {
-                  const notification = document.createElement('div');
-                  notification.style.cssText = `
-                      position: fixed;
-                      top: 20px;
-                      right: 20px;
-                      padding: 1rem 1.5rem;
-                      background-color: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-                      color: white;
-                      border-radius: 8px;
-                      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-                      z-index: 9999;
-                      transform: translateX(100%);
-                      transition: transform 0.3s ease;
-                      max-width: 300px;
-                      word-wrap: break-word;
-                  `;
-                  notification.textContent = message;
-                  document.body.appendChild(notification);
-
-                  setTimeout(() => notification.style.transform = 'translateX(0)', 100);
-                  setTimeout(() => {
-                      notification.style.transform = 'translateX(100%)';
-                      setTimeout(() => notification.remove(), 300);
-                  }, 5000);
-              }
-
-              // === MAIN COOKIE FUNCTIONS ===
-              window.acceptAllCookies = function() {
-                  console.log('Fallback: Accept all cookies');
-                  setCookieValue('cookie_consent', 'accepted');
-                  setCookieValue('cookie_essential', 'true');
-                  setCookieValue('cookie_preference', 'true');
-                  setCookieValue('cookie_analytics', 'true');
-                  setCookieValue('cookie_marketing', 'true');
-                  hideBanner();
-                  createNotification('All cookies accepted', 'success');
-              };
-
-              window.declineCookies = function() {
-                  console.log('Fallback: Decline cookies');
-                  setCookieValue('cookie_consent', 'declined');
-                  setCookieValue('cookie_essential', 'true');
-                  setCookieValue('cookie_preference', 'false');
-                  setCookieValue('cookie_analytics', 'false');
-                  setCookieValue('cookie_marketing', 'false');
-                  hideBanner();
-                  createNotification('Optional cookies declined', 'info');
-              };
-
-              window.showCookieSettings = function() {
-                  console.log('Fallback: Show cookie settings');
-                  const overlay = document.getElementById('cookieSettingsOverlay');
-                  if (overlay) {
-                      // Load current preferences into checkboxes
-                      const preferenceCookies = document.getElementById('preferenceCookies');
-                      const analyticsCookies = document.getElementById('analyticsCookies');
-                      const marketingCookies = document.getElementById('marketingCookies');
-
-                      if (preferenceCookies) {
-                          preferenceCookies.checked = getCookieValue('cookie_preference') === 'true';
-                      }
-                      if (analyticsCookies) {
-                          analyticsCookies.checked = getCookieValue('cookie_analytics') === 'true';
-                      }
-                      if (marketingCookies) {
-                          marketingCookies.checked = getCookieValue('cookie_marketing') === 'true';
-                      }
-
-                      overlay.classList.add('show');
-                      document.body.style.overflow = 'hidden';
-                      console.log('✅ Cookie settings modal shown');
-                  }
-              };
-
-              window.closeCookieSettings = function() {
-                  console.log('Fallback: Close cookie settings');
-                  const overlay = document.getElementById('cookieSettingsOverlay');
-                  if (overlay) {
-                      overlay.classList.remove('show');
-                      document.body.style.overflow = '';
-                      console.log('✅ Cookie settings modal closed');
-                  }
-              };
-
-              window.saveCookieSettings = function() {
-                  console.log('Fallback: Save cookie settings');
-
-                  const preferenceCookies = document.getElementById('preferenceCookies');
-                  const analyticsCookies = document.getElementById('analyticsCookies');
-                  const marketingCookies = document.getElementById('marketingCookies');
-
-                  setCookieValue('cookie_consent', 'customized');
-                  setCookieValue('cookie_essential', 'true');
-                  setCookieValue('cookie_preference', preferenceCookies ? preferenceCookies.checked.toString() : 'false');
-                  setCookieValue('cookie_analytics', analyticsCookies ? analyticsCookies.checked.toString() : 'false');
-                  setCookieValue('cookie_marketing', marketingCookies ? marketingCookies.checked.toString() : 'false');
-
-                  window.closeCookieSettings();
-                  hideBanner();
-                  createNotification('Cookie preferences saved', 'success');
-              };
-
-              // === EVENT LISTENERS ===
-              const overlay = document.getElementById('cookieSettingsOverlay');
-              if (overlay) {
-                  // Close on outside click
-                  overlay.addEventListener('click', function(e) {
-                      if (e.target === this) {
-                          window.closeCookieSettings();
-                      }
-                  });
-              }
-
-              // ESC key handler
-              document.addEventListener('keydown', function(e) {
-                  if (e.key === 'Escape') {
-                      const settingsOverlay = document.getElementById('cookieSettingsOverlay');
-                      if (settingsOverlay && settingsOverlay.classList.contains('show')) {
-                          window.closeCookieSettings();
-                      }
-                  }
-              });
-
-              // === INITIALIZATION ===
-              // Check if banner should be shown
-              if (!hasGivenConsent()) {
-                  console.log('🍪 No consent given, showing banner');
-                  setTimeout(showBanner, 1000);
-              } else {
-                  console.log('🍪 Consent already given, banner hidden');
-              }
-
-              // Make notification function globally available
-              window.showNotification = createNotification;
-
-              console.log('✅ Fallback cookie consent system fully initialized');
-
-          } else {
-              console.log('✅ Main script.js loaded successfully, using original functions');
-          }
-      }, 500); // Počkejte 500ms na načtení hlavního scriptu
-  });
+      window.showCookieSettings = function() {
+          const overlay = document.getElementById('cookieSettingsOverlay');
+          if (overlay) overlay.classList.add('show');
+      };
+  }
 </script>
 </body>
 </html>
