@@ -1,59 +1,42 @@
-console.log('🔧 Script.js loading started');
-
-// Ensure functions are defined before being called
 let cookieConsentInitialized = false;
 
 function showCookieBanner() {
-    console.log('🍪 showCookieBanner called');
     const banner = document.getElementById('cookieConsentBanner');
     if (banner) {
         banner.classList.add('show');
-        console.log('✅ Cookie banner shown successfully');
     } else {
-        console.error('❌ Cookie banner element not found with ID: cookieConsentBanner');
-        // Try alternative selector
         const altBanner = document.querySelector('.cookie-consent-banner');
         if (altBanner) {
             altBanner.classList.add('show');
-            console.log('✅ Cookie banner found with class selector and shown');
         }
     }
 }
 
 function hideCookieBanner() {
-    console.log('🍪 hideCookieBanner called');
     const banner = document.getElementById('cookieConsentBanner');
     if (banner) {
         banner.classList.remove('show');
-        console.log('✅ Cookie banner hidden successfully');
     }
 }
 
 function showCookieSettings() {
-    console.log('🍪 showCookieSettings called');
     const overlay = document.getElementById('cookieSettingsOverlay');
     if (overlay) {
         overlay.classList.add('show');
         document.body.style.overflow = 'hidden';
         loadCookiePreferences();
-        console.log('✅ Cookie settings shown successfully');
-    } else {
-        console.error('❌ Cookie settings overlay not found with ID: cookieSettingsOverlay');
     }
 }
 
 function closeCookieSettings() {
-    console.log('🍪 closeCookieSettings called');
     const overlay = document.getElementById('cookieSettingsOverlay');
     if (overlay) {
         overlay.classList.remove('show');
         document.body.style.overflow = '';
-        console.log('✅ Cookie settings closed successfully');
     }
 }
 
 function acceptAllCookies() {
-    console.log('🍪 acceptAllCookies called');
     try {
         // Set all cookie preferences to true
         setCookiePreference('essential', true);
@@ -70,14 +53,12 @@ function acceptAllCookies() {
         if (window.showNotification) {
             showNotification('All cookies accepted', 'success');
         }
-        console.log('✅ All cookies accepted successfully');
     } catch (error) {
-        console.error('❌ Error accepting cookies:', error);
+        console.error('Error accepting cookies:', error);
     }
 }
 
 function declineCookies() {
-    console.log('🍪 declineCookies called');
     try {
         // Set only essential cookies to true, others to false
         setCookiePreference('essential', true);
@@ -93,21 +74,17 @@ function declineCookies() {
         if (window.showNotification) {
             showNotification('Optional cookies declined', 'info');
         }
-        console.log('✅ Cookies declined successfully');
     } catch (error) {
-        console.error('❌ Error declining cookies:', error);
+        console.error('Error declining cookies:', error);
     }
 }
 
 function saveCookieSettings() {
-    console.log('🍪 saveCookieSettings called');
     try {
         // Get checkbox states
         const preferences = document.getElementById('preferenceCookies')?.checked || false;
         const analytics = document.getElementById('analyticsCookies')?.checked || false;
         const marketing = document.getElementById('marketingCookies')?.checked || false;
-
-        console.log('🍪 Cookie preferences:', { preferences, analytics, marketing });
 
         // Save preferences
         setCookiePreference('essential', true); // Always true
@@ -125,9 +102,8 @@ function saveCookieSettings() {
         if (window.showNotification) {
             showNotification('Cookie preferences saved', 'success');
         }
-        console.log('✅ Cookie settings saved successfully');
     } catch (error) {
-        console.error('❌ Error saving cookie settings:', error);
+        console.error('Error saving cookie settings:', error);
     }
 }
 
@@ -146,9 +122,8 @@ function loadCookiePreferences() {
         if (analyticsCheckbox) analyticsCheckbox.checked = analytics;
         if (marketingCheckbox) marketingCheckbox.checked = marketing;
 
-        console.log('✅ Cookie preferences loaded:', { preferences, analytics, marketing });
     } catch (error) {
-        console.error('❌ Error loading cookie preferences:', error);
+        console.error('Error loading cookie preferences:', error);
     }
 }
 
@@ -157,10 +132,22 @@ function setCookiePreference(type, value) {
     try {
         const expires = new Date();
         expires.setFullYear(expires.getFullYear() + 1);
-        document.cookie = `cookie_${type}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax; Secure`;
-        console.log(`✅ Cookie preference set: ${type} = ${value}`);
+
+        // Check if we're in a secure context (HTTPS) for Secure flag
+        const isSecure = window.location.protocol === 'https:';
+        const secureFlag = isSecure ? '; Secure' : '';
+
+        const cookieString = `cookie_${type}=${value}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}`;
+        document.cookie = cookieString;
+
+        // Verify the cookie was actually set
+        const verification = getCookieValue(`cookie_${type}`);
+
+        if (verification !== value.toString()) {
+            console.warn(`Cookie ${type} may not have been set correctly. Expected: ${value}, Got: ${verification}`);
+        }
     } catch (error) {
-        console.error(`❌ Error setting cookie preference ${type}:`, error);
+        console.error(`Error setting cookie preference ${type}:`, error);
     }
 }
 
@@ -168,10 +155,22 @@ function setCookieConsentStatus(status) {
     try {
         const expires = new Date();
         expires.setFullYear(expires.getFullYear() + 1);
-        document.cookie = `cookie_consent=${status}; expires=${expires.toUTCString()}; path=/; SameSite=Lax; Secure`;
-        console.log(`✅ Cookie consent status set: ${status}`);
+
+        // Check if we're in a secure context (HTTPS) for Secure flag
+        const isSecure = window.location.protocol === 'https:';
+        const secureFlag = isSecure ? '; Secure' : '';
+
+        const cookieString = `cookie_consent=${status}; expires=${expires.toUTCString()}; path=/; SameSite=Lax${secureFlag}`;
+        document.cookie = cookieString;
+
+        // Verify the cookie was actually set
+        const verification = getCookieValue('cookie_consent');
+
+        if (verification !== status) {
+            console.warn(`Cookie consent may not have been set correctly. Expected: ${status}, Got: ${verification}`);
+        }
     } catch (error) {
-        console.error('❌ Error setting cookie consent status:', error);
+        console.error('Error setting cookie consent status:', error);
     }
 }
 
@@ -182,7 +181,7 @@ function getCookieValue(name) {
         if (parts.length === 2) return parts.pop().split(';').shift();
         return null;
     } catch (error) {
-        console.error(`❌ Error getting cookie value ${name}:`, error);
+        console.error(`Error getting cookie value ${name}:`, error);
         return null;
     }
 }
@@ -191,10 +190,10 @@ function hasGivenConsent() {
     try {
         const consent = getCookieValue('cookie_consent');
         const hasConsent = consent !== null;
-        console.log('🍪 Has given consent:', hasConsent, 'Value:', consent);
+
         return hasConsent;
     } catch (error) {
-        console.error('❌ Error checking consent:', error);
+        console.error('Error checking consent:', error);
         return false;
     }
 }
@@ -203,7 +202,7 @@ function getCookiePreference(type) {
     try {
         return getCookieValue(`cookie_${type}`) === 'true';
     } catch (error) {
-        console.error(`❌ Error getting cookie preference ${type}:`, error);
+        console.error(`Error getting cookie preference ${type}:`, error);
         return false;
     }
 }
@@ -211,87 +210,64 @@ function getCookiePreference(type) {
 // Initialize optional services based on cookie preferences
 function initializeOptionalServices() {
     try {
-        console.log('🔧 Initializing optional services...');
         if (getCookiePreference('analytics')) {
             initializeAnalytics();
         }
-
         if (getCookiePreference('marketing')) {
             initializeMarketing();
         }
-
         if (getCookiePreference('preference')) {
             initializePreferences();
         }
-        console.log('✅ Optional services initialized');
     } catch (error) {
-        console.error('❌ Error initializing optional services:', error);
+        console.error('Error initializing optional services:', error);
     }
 }
 
-// Placeholder functions for service initialization
+// Service initialization placeholders
 function initializeAnalytics() {
-    console.log('📊 Analytics cookies enabled - initializing analytics');
+    // Initialize analytics services here
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+        console.log('Analytics cookies enabled - would initialize analytics');
+    }
 }
 
 function initializeMarketing() {
-    console.log('📢 Marketing cookies enabled - initializing marketing tools');
+    // Initialize marketing tools here
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+        console.log('Marketing cookies enabled - would initialize marketing tools');
+    }
 }
 
 function initializePreferences() {
-    console.log('⚙️ Preference cookies enabled - initializing personalization');
+    // Initialize personalization features here
+    if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+        console.log('Preference cookies enabled - would initialize personalization');
+    }
 }
 
-// Cookie consent initialization - IMPROVED WITH DEBUG
+// Cookie consent initialization
 function initializeCookieConsent() {
     try {
-        console.log('🔧 Initializing cookie consent...');
-        console.log('🔧 Document ready state:', document.readyState);
-        console.log('🔧 Current URL:', window.location.href);
-        
-        // Check if elements exist
         const banner = document.getElementById('cookieConsentBanner');
         const overlay = document.getElementById('cookieSettingsOverlay');
-        
-        console.log('🔧 Banner element found:', !!banner);
-        console.log('🔧 Overlay element found:', !!overlay);
-        
-        // Debug: List all elements with cookie-related IDs
-        const allCookieElements = document.querySelectorAll('[id*="cookie"], [class*="cookie"]');
-        console.log('🔧 Found cookie-related elements:', allCookieElements.length);
-        allCookieElements.forEach(el => {
-            console.log('  - Element:', el.tagName, 'ID:', el.id, 'Classes:', el.className);
-        });
 
-        if (!banner) {
-            console.error('❌ Cookie consent banner element not found in DOM');
-            console.log('🔧 Available elements with IDs:', 
-                Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+        if (!banner || !overlay) {
+            console.error('Cookie consent elements not found in DOM');
             return;
         }
-        
-        if (!overlay) {
-            console.error('❌ Cookie settings overlay element not found in DOM');
-            return;
-        }
-
-        console.log('✅ Cookie consent elements found');
 
         const hasConsent = hasGivenConsent();
-        console.log('🍪 Current consent status:', hasConsent);
 
         if (!hasConsent) {
-            console.log('🍪 No consent given, showing banner after delay');
             setTimeout(() => {
-                console.log('🍪 Attempting to show banner now...');
                 showCookieBanner();
             }, 1500);
         } else {
-            console.log('🍪 Consent already given, initializing services');
             initializeOptionalServices();
         }
 
-        // Set up event listeners for the cookie settings modal
+        // Event listeners for the cookie settings modal
         if (overlay) {
             // Close modal when clicking outside
             overlay.addEventListener('click', function(e) {
@@ -312,15 +288,12 @@ function initializeCookieConsent() {
         });
 
         cookieConsentInitialized = true;
-        console.log('✅ Cookie consent initialization completed');
     } catch (error) {
-        console.error('❌ Error initializing cookie consent:', error);
-        console.error('❌ Stack trace:', error.stack);
+        console.error('Error initializing cookie consent:', error);
     }
 }
 
-// Make functions available globally IMMEDIATELY
-console.log('🔧 Setting up global functions...');
+// Make functions globally available
 window.showCookieBanner = showCookieBanner;
 window.hideCookieBanner = hideCookieBanner;
 window.showCookieSettings = showCookieSettings;
@@ -328,57 +301,45 @@ window.closeCookieSettings = closeCookieSettings;
 window.acceptAllCookies = acceptAllCookies;
 window.declineCookies = declineCookies;
 window.saveCookieSettings = saveCookieSettings;
-console.log('✅ Global functions set up');
 
-// Make functions available globally for potential external use
+// Cookie consent API
 window.cookieConsent = {
     show: showCookieBanner,
     hide: hideCookieBanner,
     showSettings: showCookieSettings,
-    initialized: () => cookieConsentInitialized
+    initialized: () => cookieConsentInitialized,
+    // Add debugging functions for development
+    debug: {
+        getCookies: () => document.cookie,
+        hasConsent: hasGivenConsent,
+        getPreference: getCookiePreference,
+        clearAll: () => {
+            ['cookie_consent', 'cookie_essential', 'cookie_preference', 'cookie_analytics', 'cookie_marketing']
+                .forEach(name => {
+                    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                });
+            location.reload();
+        }
+    }
 };
 
-// ENSURE EARLY INITIALIZATION - Multiple approaches
-console.log('🔧 Setting up initialization triggers...');
-
-// 1. If DOM is already loaded
+// Initialize when DOM is ready
 if (document.readyState === 'loading') {
-    console.log('🔧 DOM still loading, adding DOMContentLoaded listener');
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('🔧 DOMContentLoaded triggered');
-        initializeCookieConsent();
-    });
+    document.addEventListener('DOMContentLoaded', initializeCookieConsent);
 } else {
-    console.log('🔧 DOM already loaded, initializing immediately');
     initializeCookieConsent();
 }
 
-// 2. Also try on window load as backup
+// Backup initialization
 window.addEventListener('load', function() {
-    console.log('🔧 Window load triggered');
     if (!cookieConsentInitialized) {
-        console.log('🔧 Backup initialization on window load');
         initializeCookieConsent();
     }
 });
 
-// Add a manual trigger for debugging
-window.debugCookieConsent = function() {
-    console.log('🔧 Manual debug trigger');
-    console.log('🔧 Initialized:', cookieConsentInitialized);
-    initializeCookieConsent();
-};
-
-// Test function availability
-console.log('🔧 Testing function availability:');
-console.log('  - acceptAllCookies:', typeof window.acceptAllCookies);
-console.log('  - declineCookies:', typeof window.declineCookies);
-console.log('  - showCookieSettings:', typeof window.showCookieSettings);
-
-// Mobile Navigation Toggle
+// Mobile Navigation and other features
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔧 Main DOMContentLoaded handler triggered');
-    
+    // Mobile navigation
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
 
@@ -388,7 +349,6 @@ document.addEventListener('DOMContentLoaded', function() {
             navMenu.classList.toggle('active');
         });
 
-        // Close mobile menu when clicking on a link
         const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
@@ -397,7 +357,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Close mobile menu when clicking outside
         document.addEventListener('click', function(event) {
             const isClickInsideNav = navMenu.contains(event.target);
             const isClickOnHamburger = hamburger.contains(event.target);
@@ -409,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Smooth scrolling for anchor links
+    // Smooth scrolling
     const anchorLinks = document.querySelectorAll('a[href^="#"]');
     anchorLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -426,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add animation classes to elements when they come into view
+    // Intersection Observer for animations
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -440,31 +399,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
 
-    // Observe elements for animation
     const animatedElements = document.querySelectorAll('.skill-card, .card, .timeline-item');
     animatedElements.forEach(el => {
         observer.observe(el);
     });
 
-    // Contact Form handling
+    // Contact form handling
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
-            // Clear previous errors
             clearFormErrors();
 
-            // Validate form
             if (validateContactForm()) {
-                // Add loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.textContent;
                 submitBtn.textContent = 'Sending...';
                 submitBtn.disabled = true;
                 this.classList.add('loading');
 
-                // Get form data
                 const formData = new FormData(this);
                 const contactData = {
                     name: formData.get('name'),
@@ -473,7 +426,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     message: formData.get('message')
                 };
 
-                // Send form data to backend
                 sendContactForm(contactData)
                     .then(response => {
                         this.reset();
@@ -492,10 +444,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Form validation functions
+    // Form validation and utilities
     function validateContactForm() {
         let isValid = true;
-
         const name = document.getElementById('name');
         const email = document.getElementById('email');
         const subject = document.getElementById('subject');
@@ -560,7 +511,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return emailRegex.test(email);
     }
 
-    // Send contact form data to backend
     async function sendContactForm(contactData) {
         try {
             const response = await fetch('/api/contact', {
@@ -576,8 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json();
-            return result;
+            return await response.json();
         } catch (error) {
             console.error('Contact form submission failed:', error);
             throw error;
@@ -590,7 +539,6 @@ document.addEventListener('DOMContentLoaded', function() {
         notification.className = `notification notification-${type}`;
         notification.textContent = message;
 
-        // Add styles
         Object.assign(notification.style, {
             position: 'fixed',
             top: '20px',
@@ -609,12 +557,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.body.appendChild(notification);
 
-        // Animate in
         setTimeout(() => {
             notification.style.transform = 'translateX(0)';
         }, 100);
 
-        // Remove after 5 seconds
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => {
@@ -625,10 +571,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     }
 
-    // Make showNotification globally available
     window.showNotification = showNotification;
 
-    // Navbar background on scroll
+    // Navbar scroll effect
     const navbar = document.querySelector('.navbar');
     if (navbar) {
         window.addEventListener('scroll', function() {
@@ -638,14 +583,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 navbar.style.backgroundColor = 'rgba(26, 32, 44, 0.95)';
             }
         });
-    }
-
-    // Final cookie consent check - run this last
-    if (!cookieConsentInitialized) {
-        console.log('🔧 Final cookie consent initialization check in DOMContentLoaded');
-        setTimeout(() => {
-            initializeCookieConsent();
-        }, 100);
     }
 });
 
@@ -662,7 +599,6 @@ function copyToClipboard(text) {
     if (navigator.clipboard && window.isSecureContext) {
         return navigator.clipboard.writeText(text);
     } else {
-        // Fallback for older browsers
         const textArea = document.createElement('textarea');
         textArea.value = text;
         textArea.style.position = 'fixed';
@@ -679,9 +615,7 @@ function copyToClipboard(text) {
     }
 }
 
-// Error handling for global errors
+// Global error handling
 window.addEventListener('error', function(e) {
-    console.error('❌ Global error:', e.error);
+    console.error('Global error:', e.error);
 });
-
-console.log('✅ Script.js fully loaded and initialized');

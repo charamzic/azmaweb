@@ -186,55 +186,7 @@
   </div>
 </div>
 
-<script>
-  console.log('🔧 Debug: Testing script-v2.js availability...');
-
-  // Test dostupnosti script-v2.js (ne script.js!)
-  fetch('/js/script-v2.js')
-      .then(response => {
-          console.log('📁 script-v2.js HTTP status:', response.status);
-          if (response.ok) {
-              return response.text();
-          } else {
-              throw new Error(`Script not found: ${response.status}`);
-          }
-      })
-      .then(text => {
-          console.log('✅ script-v2.js loaded successfully, size:', text.length);
-      })
-      .catch(error => {
-          console.error('❌ script-v2.js failed to load:', error);
-      });
-</script>
-
 <script th:src="@{/js/script-v3.js(v='1.1.0')}"></script>
 
-<script>
-  console.log('🔧 Cookie banner element exists:', !!document.getElementById('cookieConsentBanner'));
-  console.log('🔧 Script functions loaded:', typeof window.acceptAllCookies);
-
-  if (typeof window.acceptAllCookies === 'undefined') {
-      console.log('⚠️ Script functions not loaded, creating minimal fallbacks');
-
-      window.acceptAllCookies = function() {
-          console.log('Minimal fallback: Accept all cookies');
-          document.cookie = 'cookie_consent=accepted; path=/; max-age=' + (365*24*60*60);
-          const banner = document.getElementById('cookieConsentBanner');
-          if (banner) banner.style.display = 'none';
-      };
-
-      window.declineCookies = function() {
-          console.log('Minimal fallback: Decline cookies');
-          document.cookie = 'cookie_consent=declined; path=/; max-age=' + (365*24*60*60);
-          const banner = document.getElementById('cookieConsentBanner');
-          if (banner) banner.style.display = 'none';
-      };
-
-      window.showCookieSettings = function() {
-          const overlay = document.getElementById('cookieSettingsOverlay');
-          if (overlay) overlay.classList.add('show');
-      };
-  }
-</script>
 </body>
 </html>
