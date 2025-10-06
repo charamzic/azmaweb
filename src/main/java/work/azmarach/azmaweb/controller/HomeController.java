@@ -36,12 +36,12 @@ public class HomeController {
         return "projects";
     }
 
-    @GetMapping("/blog")
-    public String blog(Model model, HttpServletRequest request, Locale locale) {
-        model.addAttribute("pageTitle", messageSource.getMessage("page.title.blog", null, locale));
-        model.addAttribute("currentUri", request.getRequestURI());
-        return "blog";
-    }
+    // @GetMapping("/blog")
+    // public String blog(Model model, HttpServletRequest request, Locale locale) {
+    //     model.addAttribute("pageTitle", messageSource.getMessage("page.title.blog", null, locale));
+    //     model.addAttribute("currentUri", request.getRequestURI());
+    //     return "blog";
+    // }
 
     @GetMapping("/contact")
     public String contact(Model model, HttpServletRequest request, Locale locale) {
