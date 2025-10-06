@@ -27,7 +27,7 @@
       <a th:href="@{/}" class="nav-link" th:classappend="${currentUri == '/' ? 'active' : ''}" th:text="#{nav.home}">Home</a>
       <a th:href="@{/about}" class="nav-link" th:classappend="${currentUri == '/about' ? 'active' : ''}" th:text="#{nav.about}">About</a>
       <a th:href="@{/projects}" class="nav-link" th:classappend="${currentUri == '/projects' ? 'active' : ''}" th:text="#{nav.projects}">Projects</a>
-      <a th:href="https://blog.azmarach.work" class="nav-link">Blog</a>
+      <a href="https://blog.azmarach.work" class="nav-link" th:text="#{nav.blog}">Blog</a>
       <a th:href="@{/contact}" class="nav-link" th:classappend="${currentUri == '/contact' ? 'active' : ''}" th:text="#{nav.contact}">Contact</a>
 
       <!-- Language Switcher -->
